@@ -24,6 +24,20 @@ namespace Planning
 
     PNCMap PNCMapCreatorStraight::create_pnc_map() // 生成地图
     {
+        draw_straight_x(pnc_map_.road_length, 1.0);
+
+        // 保证pnc_map_.midline.points为偶数，否则rviz无法显示
+        if (pnc_map_.midline.points.size() % 2 == 1)
+        {
+            pnc_map_.midline.points.pop_back();
+        }
+
+        // 把所有marker放入pnc_map_markerarray中
+        pnc_map_markerarray_.markers.emplace_back(pnc_map_.midline);
+        pnc_map_markerarray_.markers.emplace_back(pnc_map_.left_boundary);
+        pnc_map_markerarray_.markers.emplace_back(pnc_map_.right_boundary);
+        RCLCPP_INFO(rclcpp::get_logger("pnc_map"), "pnc_map created, midline points: %ld", pnc_map_.midline.points.size());
+
         return pnc_map_;
     }
 
@@ -63,5 +77,20 @@ namespace Planning
 
     void PNCMapCreatorStraight::draw_straight_x(const double &length, const double &plus_flag, const double &ratio)
     {
+        double len_tmp = 0.0;
+        while (len_tmp < length)
+        {
+            pl_.x = p_mid_.x;
+            pl_.y = p_mid_.y + pnc_map_config_->pnc_map().road_half_width_;
+            pr_.x = p_mid_.x;
+            pr_.y = p_mid_.y - pnc_map_config_->pnc_map().road_half_width_;
+
+            pnc_map_.midline.points.emplace_back(p_mid_);
+            pnc_map_.left_boundary.points.emplace_back(pl_);
+            pnc_map_.right_boundary.points.emplace_back(pr_);
+
+            len_tmp += len_step_ * ratio;
+            p_mid_.x += len_step_ * plus_flag;
+        }
     }
 } // namespace Planning
