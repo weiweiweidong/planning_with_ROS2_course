@@ -53,9 +53,30 @@ namespace Planning
         global_path_rviz_pub_->publish(global_path_rviz);
         RCLCPP_INFO(this->get_logger(), "global_path for rviz published");
     }
-    Marker GlobalPathServer::path2marker(const Path &path)
+    Marker GlobalPathServer::path2marker(const Path &path) // path转Marker
     {
         Marker path_rviz_;
+        path_rviz_.header = path.header;
+        path_rviz_.ns = "global_path";
+        path_rviz_.id = 0;
+        path_rviz_.action = Marker::ADD;
+        path_rviz_.type = Marker::LINE_STRIP;          // 连续的线条
+        path_rviz_.scale.x = 0.05;                     // 线段宽度
+        path_rviz_.color.a = 1.0;                      // 不透明度
+        path_rviz_.color.r = 0.8;                      // 红
+        path_rviz_.color.g = 0.0;                      // 绿
+        path_rviz_.color.b = 0.0;                      // 蓝
+        path_rviz_.lifetime = rclcpp::Duration::max(); // 无限时间
+        path_rviz_.frame_locked = true;                // 锁定坐标系
+
+        Point p_tmp;
+        for (const auto &pose : path.poses)
+        {
+            p_tmp.x = pose.pose.position.x;
+            p_tmp.y = pose.pose.position.y;
+            path_rviz_.points.emplace_back(p_tmp);
+        }
+
         return path_rviz_;
     }
 } // namespace Planning
