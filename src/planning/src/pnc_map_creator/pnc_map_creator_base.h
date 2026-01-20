@@ -36,10 +36,10 @@ namespace Planning
         PNCMap pnc_map_;                               // 地图
         MarkerArray pnc_map_markerarray_;              // rviz用地图
 
-        Point p_mid_, pl_, pr_;     // 左中右三个点
-        double theta_current = 0.0; // 当前角度
-        double len_step_ = 0.0;     // 长度步长
-        double theta_step_ = 0.0;   // 角度步长
+        Point p_mid_, pl_, pr_;      // 左中右三个点
+        double theta_current_ = 0.0; // 当前角度
+        double len_step_ = 0.0;      // 长度步长
+        double theta_step_ = 0.0;    // 角度步长
     };
 } // namespace Planning
 #endif // PNC_MAP_CREATOR_BASE_H_
