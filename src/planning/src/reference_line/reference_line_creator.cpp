@@ -56,6 +56,10 @@ namespace Planning
         // 平滑整条参考线
 
         // 计算投影点参数
+        Curve::cal_projection_param(refer_line_);
+
+        RCLCPP_INFO(rclcpp::get_logger("reference_line"), "reference line created, match_point_index = %d, front_index = %d, back_index = %d, size = %ld",
+                    match_point_index_, front_index_, back_index_, refer_line_.refer_line.size());
 
         return refer_line_;
     }

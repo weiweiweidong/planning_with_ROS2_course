@@ -35,4 +35,114 @@ namespace Planning
         return closest_index;
     }
 
+    // 计算投影点参数（参考线）
+    void Curve::cal_projection_param(Referline &refer_line)
+    {
+        const int path_size = refer_line.refer_line.size();
+        if (path_size < 3)
+        {
+            RCLCPP_ERROR(rclcpp::get_logger("math"), "refer_line too short");
+            return;
+        }
+
+        // 计算rs
+        double rs = 0.0;
+        for (int i = 0; i < path_size; i++)
+        {
+            if (i == 0)
+            {
+                rs = 0.0;
+            }
+            else
+            {
+                rs += std::hypot(refer_line.refer_line[i].pose.pose.position.y - refer_line.refer_line[i - 1].pose.pose.position.y,
+                                 refer_line.refer_line[i].pose.pose.position.x - refer_line.refer_line[i - 1].pose.pose.position.x);
+            }
+            refer_line.refer_line[i].rs = rs;
+        }
+
+        // (计算航向角
+        for (int i = 0; i < path_size; i++)
+        {
+            if (i < path_size - 1)
+            {
+                refer_line.refer_line[i].rtheta =
+                    std::atan2(refer_line.refer_line[i + 1].pose.pose.position.y - refer_line.refer_line[i].pose.pose.position.y,
+                               refer_line.refer_line[i + 1].pose.pose.position.x - refer_line.refer_line[i].pose.pose.position.x);
+            }
+            else
+            { // 最后一个点
+                refer_line.refer_line[i].rtheta =
+                    std::atan2(refer_line.refer_line[i].pose.pose.position.y - refer_line.refer_line[i - 1].pose.pose.position.y,
+                               refer_line.refer_line[i].pose.pose.position.x - refer_line.refer_line[i - 1].pose.pose.position.x);
+            }
+        }
+
+        // 计算曲率
+        for (int i = 0; i < path_size; i++)
+        {
+            if (i < path_size - 1)
+            {
+                const double dis = std::hypot(refer_line.refer_line[i + 1].pose.pose.position.y - refer_line.refer_line[i].pose.pose.position.y,
+                                              refer_line.refer_line[i + 1].pose.pose.position.x - refer_line.refer_line[i].pose.pose.position.x);
+
+                if (dis <= kMathEpsilon) // 如果算出来的结果非常接近0
+                {
+                    refer_line.refer_line[i].rkappa = 0.0;
+                }
+                else
+                {
+                    refer_line.refer_line[i].rkappa = (refer_line.refer_line[i + 1].rtheta - refer_line.refer_line[i].rtheta) / dis;
+                }
+            }
+            else
+            {
+                const double dis = std::hypot(refer_line.refer_line[i].pose.pose.position.y - refer_line.refer_line[i - 1].pose.pose.position.y,
+                                              refer_line.refer_line[i].pose.pose.position.x - refer_line.refer_line[i - 1].pose.pose.position.x);
+
+                if (dis <= kMathEpsilon) // 如果算出来的结果非常接近0
+                {
+                    refer_line.refer_line[i].rkappa = 0.0;
+                }
+                else
+                {
+                    refer_line.refer_line[i].rkappa = (refer_line.refer_line[i].rtheta - refer_line.refer_line[i - 1].rtheta) / dis;
+                }
+            }
+        }
+
+        // 计算曲率变化率
+        for (int i = 0; i < path_size; i++)
+        {
+            if (i < path_size - 1)
+            {
+                const double dis = std::hypot(refer_line.refer_line[i + 1].pose.pose.position.y - refer_line.refer_line[i].pose.pose.position.y,
+                                              refer_line.refer_line[i + 1].pose.pose.position.x - refer_line.refer_line[i].pose.pose.position.x);
+
+                if (dis <= kMathEpsilon) // 如果算出来的结果非常接近0
+                {
+                    refer_line.refer_line[i].rkappa = 0.0;
+                }
+                else
+                {
+                    refer_line.refer_line[i].rkappa = (refer_line.refer_line[i + 1].rkappa - refer_line.refer_line[i].rkappa) / dis;
+                }
+            }
+            else
+            {
+                const double dis = std::hypot(refer_line.refer_line[i].pose.pose.position.y - refer_line.refer_line[i - 1].pose.pose.position.y,
+                                              refer_line.refer_line[i].pose.pose.position.x - refer_line.refer_line[i - 1].pose.pose.position.x);
+
+                if (dis <= kMathEpsilon) // 如果算出来的结果非常接近0
+                {
+                    refer_line.refer_line[i].rkappa = 0.0;
+                }
+                else
+                {
+                    refer_line.refer_line[i].rkappa = (refer_line.refer_line[i].rkappa - refer_line.refer_line[i - 1].rkappa) / dis;
+                }
+            }
+        }
+    }
+
 } // namespace Planning
