@@ -2,9 +2,68 @@
 
 namespace Planning
 {
-    ReferenceLineCreator::ReferenceLineCreator()    // 创建参考线
+    ReferenceLineCreator::ReferenceLineCreator() // 创建参考线
     {
         RCLCPP_INFO(rclcpp::get_logger("reference_line"), "reference_line_creator created");
+
+        // 读取配置文件
+        reference_line_config_ = std::make_unique<ConfigReader>(); // 指针初始化
+        reference_line_config_->read_reference_line_config();
+
+        // 创建平滑器
+        refer_line_smoother_ = std::make_shared<ReferenceLineSmoother>();
     }
 
-}   // namespace Planning
+    // 生成参考线
+    Referline ReferenceLineCreator::create_reference_line(const Path &global_path,
+                                                          const PoseStamped &target_point)
+    {
+        // 如果全局路径为空，返回空参考线
+        if (global_path.poses.empty())
+        {
+            return refer_line_;
+        }
+
+        // 找到匹配点
+        match_point_index_ = Curve::find_match_point(global_path, last_match_point_index_, target_point);
+        last_match_point_index_ = match_point_index_; // 更新上一帧匹配点
+        if (match_point_index_ < 0)                   // 查找失败
+        {
+            RCLCPP_ERROR(rclcpp::get_logger("reference_line"), "find match_point_index failed");
+            return refer_line_;
+        }
+
+        // 计算最前点和最后点在全局路径下的下标
+        const int global_path_size = global_path.poses.size();
+        front_index_ = (global_path_size - 1 >= match_point_index_ + reference_line_config_->refer_line().front_size_)
+                           ? (match_point_index_ + reference_line_config_->refer_line().front_size_) // 前方点足够200个
+                           : (global_path_size - 1);                                                 // 前方点不够200个
+        back_index_ = (0 <= match_point_index_ - reference_line_config_->refer_line().back_size_)
+                          ? (match_point_index_ - reference_line_config_->refer_line().back_size_) // 后方点足够80个
+                          : (0);                                                                   // 后方点不够80个
+
+        // 填充参考线
+        refer_line_.header.frame_id = reference_line_config_->pnc_map().frame_;
+        refer_line_.header.stamp = rclcpp::Clock().now();
+        refer_line_.refer_line.clear();
+        ReferlinePoint point_tmp;
+        for (int i = back_index_; i <= front_index_; i++)
+        {
+            point_tmp.pose = global_path.poses[i];
+            refer_line_.refer_line.emplace_back(point_tmp);
+        }
+
+        // 平滑整条参考线
+
+        // 计算投影点参数
+
+        return refer_line_;
+    }
+
+    // 转换成rviz的Path格式
+    Path ReferenceLineCreator::referline_to_rviz()
+    {
+        return Path();
+    }
+
+} // namespace Planning
