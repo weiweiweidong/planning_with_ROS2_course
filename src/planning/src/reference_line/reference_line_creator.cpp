@@ -67,7 +67,18 @@ namespace Planning
     // 转换成rviz的Path格式
     Path ReferenceLineCreator::referline_to_rviz()
     {
-        return Path();
+        refer_line_rviz_.header = refer_line_.header;
+        refer_line_rviz_.poses.clear();
+
+        PoseStamped point_tmp;
+        for (const auto &point : refer_line_.refer_line)
+        {
+            point_tmp.header = refer_line_rviz_.header;
+            point_tmp.pose = point.pose.pose;
+            refer_line_rviz_.poses.emplace_back(point_tmp);
+        }
+
+        return refer_line_rviz_;
     }
 
 } // namespace Planning

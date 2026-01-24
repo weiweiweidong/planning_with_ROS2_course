@@ -229,5 +229,56 @@ namespace Planning
   // 总流程回调
   void PlanningProcess::planning_callback()
   {
+    const auto start_time = this->get_clock()->now(); // 获取开始时间
+
+    // 监听车辆定位
+    get_location(car_);
+
+    // 参考线
+    const auto refer_line = refer_line_creator_->create_reference_line(global_path_, car_->loc_point());
+    if (refer_line.refer_line.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(), "reference_line empty!");
+      return;
+    }
+    const auto refer_line_rviz = refer_line_creator_->referline_to_rviz(); // 生成rviz用的参考线
+    refer_line_pub_->publish(refer_line_rviz);                             // 发布参考线
+
+    // 主车和障碍物向参考线投影
+
+    // 障碍物按照s值排序
+
+    // 路径决策
+
+    // 路径规划
+
+    // 障碍物向路径投影
+
+    // 速度决策
+
+    // 速度规划
+
+    // 合成轨迹
+
+    // 更新绘图信息
+
+    // 更新车辆信息
+    RCLCPP_INFO(this->get_logger(), "----------------car state: loc: (%.2f, %.2f), speed: %.2f, a: %.2f, theta: %.2f, kappa: %.2f",
+                car_->loc_point().pose.position.x,
+                car_->loc_point().pose.position.y,
+                car_->speed(), car_->acceleration(),
+                car_->theta(), car_->kappa());
+
+    // 计算运行时间：因为我们给每一帧留了0.1s（100ms）的时间，所以规划的运行时间是不能超过0.1s的，否则会有延迟，影响车辆安全
+    const auto end_time = this->get_clock()->now();                                             // 获取结束时间
+    const double planning_total_time = end_time.seconds() - start_time.seconds();               // 获取运行时间（s）
+    RCLCPP_INFO(this->get_logger(), "planning total time: %fms\n", planning_total_time * 1000); // 打印规划运行的总时间（ms）
+
+    // 防止系统卡死
+    if (planning_total_time > 1.0) // 规划时间超过1s,直接关闭系统
+    {
+      RCLCPP_ERROR(this->get_logger(), "planning time too long!");
+      rclcpp::shutdown();
+    }
   }
 }
