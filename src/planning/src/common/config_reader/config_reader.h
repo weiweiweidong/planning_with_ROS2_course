@@ -71,7 +71,7 @@ namespace Planning
 
         // vehicle
         void read_vehicle_config(VehicleStruct &vehicle, const std::string &name);
-        void read_vehicle_config();
+        void read_vehicles_config();
         inline VehicleStruct main_car() const { return main_car_; }
         inline VehicleStruct obs_car1() const { return obs_car1_; }
         inline VehicleStruct obs_car2() const { return obs_car2_; }

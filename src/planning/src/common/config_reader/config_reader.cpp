@@ -29,7 +29,7 @@ namespace Planning
         }
     }
 
-    void ConfigReader::read_vehicle_config()
+    void ConfigReader::read_vehicles_config()
     {
         try
         {
@@ -147,7 +147,7 @@ namespace Planning
         {
             read_pnc_map_config();
             read_global_path_config();
-            read_vehicle_config();
+            read_vehicles_config();
             process_.obs_dis_ = planning_config["planning_process"]["obs_dis"].as<double>();
         }
         catch (const YAML::Exception &e)
