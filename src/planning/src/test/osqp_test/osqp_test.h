@@ -1,0 +1,14 @@
+#ifndef TEST_H_
+#define TEST_H_
+#include "rclcpp/rclcpp.hpp"
+
+namespace Planning
+{
+    class OsqpTest : public rclcpp::Node // osqp测试
+    {
+    public:
+        OsqpTest();
+        void test_problem(); // 示例问题
+    };
+} // namespace Planning
+#endif // TEST_H_
