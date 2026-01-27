@@ -54,6 +54,7 @@ namespace Planning
         }
 
         // 平滑整条参考线
+        refer_line_smoother_->smooth_reference_line(refer_line_);
 
         // 计算投影点参数
         Curve::cal_projection_param(refer_line_);
