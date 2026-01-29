@@ -13,6 +13,11 @@ namespace Planning
 
     // 创建车辆和障碍物
     car_ = std::make_shared<MainCar>();
+    for (int i = 0; i < 3; i++) // 我们已知有三个障碍物，所以这里生成了三个 (暂时写死，以后会修正)
+    {
+      auto obs_car_ = std::make_shared<ObsCar>(i + 1); // 注：主车的id号为0。障碍物的id号码从1开始
+      obses_spawn_.emplace_back(obs_car_);
+    }
 
     // 创建广播器
     tf_broadcaster_ = std::make_shared<StaticTransformBroadcaster>(this);
@@ -51,10 +56,15 @@ namespace Planning
 
     return true;
   }
+
   bool PlanningProcess::planning_init() // 流程初始化
   {
     // 生成车辆
     vehicle_spawn(car_);
+    for (const auto &obs : obses_spawn_) // 生成障碍物车辆
+    {
+      vehicle_spawn(obs);
+    }
 
     // 连接地图服务器
     if (!connect_server(map_client_))

@@ -5,10 +5,10 @@
 
 namespace Planning
 {
-    class ObsCar : public VehicleBase  // 障碍车
-        {
-            public:
-                ObsCar();
-        };
-}  // namespace Planning
-#endif  // OBS_CAR_BASE_H_
+    class ObsCar : public VehicleBase // 障碍车
+    {
+    public:
+        ObsCar(const int &id);
+    };
+} // namespace Planning
+#endif // OBS_CAR_BASE_H_

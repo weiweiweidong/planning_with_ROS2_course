@@ -60,9 +60,11 @@ namespace Planning
     inline Path global_path() const { return global_path_; } // 获取全局路径
 
   private:
-    std::unique_ptr<ConfigReader> process_config_; // 配置
-    std::shared_ptr<VehicleBase> car_;             // 主车
-    double obs_dis_ = 0.0;                         // 考虑障碍物的距离
+    std::unique_ptr<ConfigReader> process_config_;          // 配置
+    std::shared_ptr<VehicleBase> car_;                      // 主车
+    std::vector<std::shared_ptr<VehicleBase>> obses_spawn_; // 所有障碍物的合集，模拟感知信号
+    std::vector<std::shared_ptr<VehicleBase>> obses_;       // 目前需要考虑的障碍物 （例如太远的障碍物可以暂时不考虑）
+    double obs_dis_ = 0.0;                                  // 考虑障碍物的距离
 
     std::shared_ptr<StaticTransformBroadcaster> tf_broadcaster_; // 坐标广播器
     std::unique_ptr<Buffer> buffer_;                             // 缓存对象
