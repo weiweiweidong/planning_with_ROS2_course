@@ -5,10 +5,13 @@
 
 namespace Planning
 {
-    class MainCar : public VehicleBase  // 主车
-        {
-            public:
-                MainCar();
-        };
-}  // namespace Planning
-#endif  // MAIN_CAR_BASE_H_
+    class MainCar : public VehicleBase // 主车
+    {
+    public:
+        MainCar();
+
+        // 定位点转frenet
+        void vehicle_cartesian_to_frenet(const Referline &refer_line) override; // 定位点在参考线上的投影点参数
+    };
+} // namespace Planning
+#endif // MAIN_CAR_BASE_H_
