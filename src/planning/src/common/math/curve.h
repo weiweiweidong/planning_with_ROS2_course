@@ -59,7 +59,7 @@ namespace Planning
         // 找到投影点
         static void find_projection_point(
             // 输入：参考线，目标点
-            const Referline &path, const PoseStamped &target_point,
+            const Referline &referline, const PoseStamped &target_point,
             // 输出：目标点在参考线的投影点在笛卡尔下的参数：rs, rx, ry, rtheta, rkappa, rdkappa
             double &rs, double &rx, double &ry,
             double &rtheta, double &rkappa, double &rdkappa);

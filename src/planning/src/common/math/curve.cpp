@@ -145,19 +145,53 @@ namespace Planning
     }
 
     // 找匹配点下标（在参考线上）
-    int Curve::find_match_point(const Referline &refer_line, const PoseStamped &target_point)
+    int Curve::find_match_point(const Referline &path, const PoseStamped &target_point)
     {
-        return 0;
+        const int path_size = path.refer_line.size();
+        if (path_size <= 1)
+        {
+            return path_size - 1;
+        }
+
+        double min_dis = std::numeric_limits<double>::max();
+        int closest_index = -1;
+
+        // 使用遍历找到最近点
+        for (int i = 0; i < path_size; i++)
+        {
+            double dis = std::hypot(path.refer_line[i].pose.pose.position.x - target_point.pose.position.x,
+                                    path.refer_line[i].pose.pose.position.y - target_point.pose.position.y);
+            if (dis < min_dis)
+            {
+                min_dis = dis;
+                closest_index = i;
+            }
+        }
+
+        return closest_index;
     }
 
     // 找到投影点
     void Curve::find_projection_point(
         // 输入：参考线，目标点
-        const Referline &path, const PoseStamped &target_point,
+        const Referline &referline, const PoseStamped &target_point,
         // 输出：目标点在参考线的投影点在笛卡尔下的参数：rs, rx, ry, rtheta, rkappa, rdkappa
         double &rs, double &rx, double &ry,
         double &rtheta, double &rkappa, double &rdkappa)
     {
+        // 简化：使用匹配点近似替代。前提：参考线足够密且足够平滑
+        const int match_index = find_match_point(referline, target_point);
+        if (match_index < 0)
+        {
+            return;
+        }
+
+        rx = referline.refer_line[match_index].pose.pose.position.x;
+        ry = referline.refer_line[match_index].pose.pose.position.y;
+        rs = referline.refer_line[match_index].rs;
+        rtheta = referline.refer_line[match_index].rtheta;
+        rkappa = referline.refer_line[match_index].rkappa;
+        rdkappa = referline.refer_line[match_index].rdkappa;
     }
 
     // 计算投影点参数（参考线）
