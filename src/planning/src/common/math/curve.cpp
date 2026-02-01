@@ -2,8 +2,82 @@
 
 namespace Planning
 {
+    // 把角度约束到[-pi,pi)范围内。
+    // 这里角度的统一很重要，如果两个角度数值上相差2pi,在做比较或运算时会判为不同的角度，但实际上是相同的角度。做一这里必须统一角度
+    double Curve::NormalizeAngle(const double &angle)
+    {
+        double a = std::fmod(angle + M_PI, 2.0 * M_PI);
+        if (a < 0.0)
+        {
+            a += (2.0 * M_PI);
+        }
+        return a - M_PI;
+    }
 
-    // 找匹配点下标
+    // 笛卡尔转frenet
+    void Curve::cartesian_to_frenet(
+        // 输入1：目标点在笛卡尔下的参数：x, y, theta, kappa, speed, a
+        const double &x, const double &y, const double &theta,
+        const double &speed, const double &a, const double &kappa,
+        // 输入2：目标点在参考线的投影点在笛卡尔下的参数：rs, rx, ry, rtheta, rkappa, rdkappa
+        const double &rs, const double &rx, const double &ry,
+        const double &rtheta, const double &rkappa, const double &rdkappa,
+        // 输出：目标点在frenet下的参数：s, ds/dt, d(ds)/dt, l, dl/ds, dl/dt, d(dl)/ds, d(dl)/dt
+        double &s, double &ds_dt, double &dds_dt,
+        double &l, double &dl_ds, double &dl_dt, double &ddl_ds, double &ddl_dt)
+    {
+        // 计算s
+        s = rs;
+
+        // 计算l
+        const double dx = x - rx;
+        const double dy = y - ry;
+        const double cos_theta_r = std::cos(rtheta);
+        const double sin_theta_r = std::sin(rtheta);
+        const double cross_r_x = cos_theta_r * dy - sin_theta_r * dx;
+        l = std::copysign(std::hypot(dx, dy), cross_r_x);
+
+        // 计算l' = dl/ds
+        const double delta_theta = theta - rtheta;
+        const double tan_delta_theta = std::tan(delta_theta);
+        const double cos_delta_theta = std::cos(delta_theta);
+        const double sin_delta_theta = std::sin(delta_theta);
+        const double one_minus_kappa_l = 1 - rkappa * l;
+        dl_ds = one_minus_kappa_l * tan_delta_theta;
+
+        // 计算l'' = d(dl)/ds
+        const double kappa_l_prime = rdkappa * l + rkappa * dl_ds;
+        const double delta_theta_prime = one_minus_kappa_l / cos_delta_theta * kappa - rkappa;
+        ddl_ds = -kappa_l_prime * tan_delta_theta +
+                 one_minus_kappa_l / (cos_delta_theta * cos_delta_theta) * delta_theta_prime;
+
+        // 计算ds/dt
+        ds_dt = speed * cos_delta_theta / one_minus_kappa_l;
+
+        // 计算d(ds)/dt
+        dds_dt = (a * cos_delta_theta - (ds_dt * ds_dt) * (dl_ds * delta_theta_prime - kappa_l_prime)) / one_minus_kappa_l;
+
+        // 计算dl_dt
+        dl_dt = speed * sin_delta_theta;
+
+        // 计算ddl_dt
+        ddl_dt = a * sin_delta_theta;
+    }
+
+    // frenet转笛卡尔
+    void Curve::frenet_to_cartesian( // 输出1：目标点在frenet下的参数：s, ds/dt, d(ds)/dt, l, dl/ds, d(dl)/ds
+        const double &s, const double &ds_dt, const double &dds_dt,
+        const double &l, const double &dl_ds, const double &ddl_ds,
+        // 输入2：目标点在参考线的投影点在笛卡尔下的参数：rs, rx, ry, rtheta, rkappa, rdkappa
+        const double &rs, const double &rx, const double &ry,
+        const double &rtheta, const double &rkappa, const double &rdkappa,
+        // 输出：目标点在笛卡尔下的参数：x, y, theta, kappa, speed, a
+        double &x, double &y, double &theta,
+        double &speed, double &a, double &kappa)
+    {
+    }
+
+    // 找匹配点下标 (利用上一帧)
     int Curve::find_match_point(const Path &path, const int &last_match_point_index, const PoseStamped &target_point)
     {
         const int path_size = path.poses.size();
@@ -33,6 +107,22 @@ namespace Planning
         }
 
         return closest_index;
+    }
+
+    // 找匹配点下标（在参考线上）
+    int Curve::find_match_point(const Referline &refer_line, const PoseStamped &target_point)
+    {
+        return 0;
+    }
+
+    // 找到投影点
+    void Curve::find_projection_point(
+        // 输入：参考线，目标点
+        const Referline &path, const PoseStamped &target_point,
+        // 输出：目标点在参考线的投影点在笛卡尔下的参数：rs, rx, ry, rtheta, rkappa, rdkappa
+        double &rs, double &rx, double &ry,
+        double &rtheta, double &rkappa, double &rdkappa)
+    {
     }
 
     // 计算投影点参数（参考线）
