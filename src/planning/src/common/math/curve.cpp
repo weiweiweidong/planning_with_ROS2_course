@@ -75,6 +75,41 @@ namespace Planning
         double &x, double &y, double &theta,
         double &speed, double &a, double &kappa)
     {
+        // 判断s和rs是否足够接近
+        if (std::fabs(rs - s) > delta_s_min)
+        {
+            RCLCPP_ERROR(rclcpp::get_logger("math"), "reference point s and projection rs don't match! rs = %.2f, s = %.2f", rs, s);
+            return;
+        }
+
+        // 计算x和y
+        const double cos_theta_r = std::cos(rtheta);
+        const double sin_theta_r = std::sin(rtheta);
+        x = rx - sin_theta_r * l;
+        y = ry + cos_theta_r * l;
+
+        // 计算theta
+        const double one_minus_kappa_l = 1 - rkappa * l;
+        const double delta_theta = std::atan2(dl_ds, one_minus_kappa_l);
+        theta = NormalizeAngle(delta_theta + rtheta);
+
+        // 计算kappa
+        const double tan_delta_theta = dl_ds / one_minus_kappa_l;
+        const double cos_delta_theta = std::cos(delta_theta);
+        const double kappa_l_prime = rdkappa * l + rkappa * dl_ds;
+        kappa = ((ddl_ds + kappa_l_prime * tan_delta_theta) *
+                     (cos_delta_theta * cos_delta_theta) / one_minus_kappa_l +
+                 rkappa) *
+                cos_delta_theta / one_minus_kappa_l;
+
+        // 计算speed
+        speed = std::hypot(ds_dt * one_minus_kappa_l, ds_dt * dl_ds);
+
+        // 计算a
+        const double delta_theta_prime = one_minus_kappa_l / cos_delta_theta * kappa - rkappa;
+        a = dds_dt * one_minus_kappa_l / cos_delta_theta +
+            (ds_dt * ds_dt) / cos_delta_theta *
+                (dl_ds * delta_theta_prime - kappa_l_prime);
     }
 
     // 找匹配点下标 (利用上一帧)

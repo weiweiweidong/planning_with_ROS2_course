@@ -15,6 +15,7 @@ namespace Planning
     using geometry_msgs::msg::PoseStamped;
     using nav_msgs::msg::Path;
 
+    constexpr double delta_s_min = 1.0;     // 预设了一个s和rs之间的最远距离（我们希望rs与s之间越近越好，一旦超出了这个值，就认为他俩之间不匹配）
     constexpr double kMathEpsilon = 1.0e-6; // 定义一个很小的数，当作0来使用
 
     class Curve // 曲线
