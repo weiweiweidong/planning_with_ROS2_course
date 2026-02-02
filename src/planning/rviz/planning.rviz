@@ -9,6 +9,7 @@ Panels:
         - /TF1
         - /MainCar1
         - /ObsCar1
+        - /LocalPath1
       Splitter Ratio: 0.5
     Tree Height: 1504
   - Class: rviz_common/Selection
@@ -312,6 +313,34 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /planning/reference_line
       Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz_default_plugins/Path
+      Color: 25; 255; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Billboards
+      Line Width: 0.20000000298023224
+      Name: LocalPath
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /planning/local_path
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -358,25 +387,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 9.112384796142578
+      Distance: 188.44378662109375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.307394802570343
-        Y: -0.2949892580509186
-        Z: 1.0635273456573486
+        X: 62.50001525878906
+        Y: -1.3662333488464355
+        Z: 21.858732223510742
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3647974133491516
+      Pitch: 1.244796633720398
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.561617136001587
+      Yaw: 2.9716172218322754
     Saved: ~
 Window Geometry:
   Displays:
