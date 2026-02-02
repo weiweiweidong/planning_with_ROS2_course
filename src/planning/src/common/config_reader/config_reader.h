@@ -92,7 +92,7 @@ namespace Planning
 
         // local path
         void read_local_path_config();
-        inline LocalPathStruct loacl_path() const { return local_path_; }
+        inline LocalPathStruct local_path() const { return local_path_; }
 
         // local speeds
         void read_local_speeds_config();
