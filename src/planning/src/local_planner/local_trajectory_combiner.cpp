@@ -18,7 +18,8 @@ namespace Planning
         local_trajectory_.header = path.header;
         local_trajectory_.local_trajectory.clear();
 
-        if (path_size < 3 || speeds_size < 3) // 少于3个点，就视为空
+        // if (path_size < 3 || speeds_size < 3) // 少于3个点，就视为空
+        if (path_size < 3) // 因为目前还没速度的代码，为了不启动的时候疯狂打印报错，先暂时这样写
         {
             RCLCPP_WARN(rclcpp::get_logger("trajectory"), "local path or speed empty!");
             return local_trajectory_;
