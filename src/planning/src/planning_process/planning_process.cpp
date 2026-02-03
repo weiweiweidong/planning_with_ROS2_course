@@ -322,6 +322,7 @@ namespace Planning
     // 更新绘图信息
 
     // 更新车辆信息
+    car_->update_cartesian_info(local_trajectory.local_trajectory[0]);
     RCLCPP_INFO(this->get_logger(), "----------------car state: loc: (%.2f, %.2f), speed: %.2f, a: %.2f, theta: %.2f, kappa: %.2f",
                 car_->loc_point().pose.position.x,
                 car_->loc_point().pose.position.y,

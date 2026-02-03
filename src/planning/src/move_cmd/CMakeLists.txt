@@ -11,10 +11,10 @@ set(DEPENDS
 )
 
 # 添加节点
-add_library(car_move_cmd
+add_executable(car_move_cmd
   ${CMAKE_CURRENT_SOURCE_DIR}/car_move_cmd.cpp
 )
-add_library(obs_move_cmd
+add_executable(obs_move_cmd
   ${CMAKE_CURRENT_SOURCE_DIR}/obs_move_cmd.cpp
 )
 set(MOVE_TARGETS
@@ -34,6 +34,11 @@ foreach(target ${MOVE_TARGETS})
   )
 endforeach(target ${MOVE_TARGETS})
 
+# 实际位置赋值开关
+option(USE_ACTUAL_POS_MACRO "Enable USE_ACTUAL_POS" OFF)
+if(USE_ACTUAL_POS_MACRO)
+  target_compile_definitions(car_move_cmd PUBLIC USE_ACTUAL_POS)
+endif()
 
 # 安装动态库，节点，相关目录
 install(TARGETS

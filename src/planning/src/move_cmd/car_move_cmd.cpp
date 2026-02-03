@@ -65,7 +65,7 @@ namespace Planning
         const double speed_y = 1.0 * std::sin(trajectory->local_trajectory[closest_index].path_point.theta);
 
         // 位置更新：
-#ifdef USE_ACTUAL_POS
+#ifdef USE_ACTUAL_POS //  开关写在了CMakeList里面
         // 方法1：直接用实际位置赋值，弯道上会有误差
         transform_data.transform.translation.x = car_param_.pos_x_;
         transform_data.transform.translation.y = car_param_.pos_y_;
