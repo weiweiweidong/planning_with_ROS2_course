@@ -4,7 +4,7 @@ vehicle:                            #　车辆
     frame: "base_footprint"         #　坐标名
     length: 3.0                     #　长度
     width: 1.5                      #　宽度
-    pose_x: 88.0                     #　x坐标
+    pose_x: 0.0                     #　x坐标
     pose_y: 0.0                     #　y坐标
     pose_theta: 0.0                 #　航向角
     speed_ori: 1.0                  #　初速度
