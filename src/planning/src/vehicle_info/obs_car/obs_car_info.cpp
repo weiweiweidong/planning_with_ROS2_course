@@ -54,4 +54,11 @@ namespace Planning
                     s_, ds_dt_, dds_dt_, l_, dl_ds_, dl_dt_, ddl_ds_, ddl_dt_);
     }
 
+    //  向路径投影
+    void ObsCar::vehicle_cartesian_to_frenet_2path(const LocalPath &local_path,
+                                                   const Referline &refer_line,
+                                                   const std::shared_ptr<VehicleBase> &car)
+    {
+    }
+
 } // namespace Planning
