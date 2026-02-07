@@ -310,6 +310,7 @@ namespace Planning
     }
 
     // 速度决策
+    decider_->make_speed_decision(car_, obses_);
 
     // 速度规划
     LocalSpeeds local_speeds;
