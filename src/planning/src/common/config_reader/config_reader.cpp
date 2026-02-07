@@ -115,7 +115,7 @@ namespace Planning
         try
         {
             read_vehicles_config();
-            local_speeds_.speed_size_ = planning_config["local_speeds"]["speed_size"].as<int>();
+            local_speeds_.speed_size_ = planning_config["local_speed"]["speed_size"].as<int>();
         }
         catch (const YAML::Exception &e)
         {

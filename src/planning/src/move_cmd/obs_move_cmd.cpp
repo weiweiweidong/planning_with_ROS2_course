@@ -54,7 +54,7 @@ namespace Planning
             qtn.setRPY(0.0, 0.0, obs_param.theta_);
             transform_data.transform.rotation.x = qtn.getX();
             transform_data.transform.rotation.y = qtn.getY();
-            transform_data.transform.rotation.x = qtn.getZ();
+            transform_data.transform.rotation.z = qtn.getZ();
             transform_data.transform.rotation.w = qtn.getW();
 
             // 广播消息
