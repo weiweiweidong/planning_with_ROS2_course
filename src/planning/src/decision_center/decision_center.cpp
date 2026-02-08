@@ -127,6 +127,7 @@ namespace Planning
         for (const auto &obs : obses)
         {
             const double obs_dis_s = obs->s_2path() + car->speed();    // 主车与障碍物的距离（沿路径）
+            const double follow_safe_dis = obs->ds_dt_2path() * 50.0;  // 跟车安全距离
             if (obs_dis_s > ori_dis ||                                 // 障碍物车辆距离太远，现在还不用考虑
                 obs_dis_s < -decision_config_->decision().safe_dis_s_) // 障碍物已经落后主车太远，超过了安全距离
             {
@@ -157,7 +158,7 @@ namespace Planning
 
                     // 计算st点
                     p.t_ = p.t0_ + real_brake_time;
-                    p.s_2path_ = obs_dis_s - decision_config_->decision().safe_dis_s_ + obs->ds_dt_2path() * p.t_;
+                    p.s_2path_ = obs_dis_s - follow_safe_dis + obs->ds_dt_2path() * p.t_;
                     p.ds_dt_2path_ = obs->ds_dt_2path();
                     p.type_ = static_cast<int>(STPointType::STOP);
                     st_points_.emplace_back(p);

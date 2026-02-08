@@ -13,7 +13,7 @@ namespace Planning
 
     // 创建车辆和障碍物
     car_ = std::make_shared<MainCar>();
-    for (int i = 0; i < 3; i++) // 我们已知有三个障碍物，所以这里生成了三个 (暂时写死，以后会修正)
+    for (int i = 0; i < process_config_->scenario().obs_num_; i++) // 遍历障碍物  process_config_->scenario().obs_num_
     {
       auto obs_car_ = std::make_shared<ObsCar>(i + 1); // 注：主车的id号为0。障碍物的id号码从1开始
       obses_spawn_.emplace_back(obs_car_);

@@ -149,15 +149,15 @@ class PlotData(Node):
             fig3.add_patch(p_st)  # 添加这个多边形到绘图区域
 
         plt.title("st info")  # 图的标题
-        plt.xlabel("t")  # 横坐标名称为s
+        plt.xlabel("t")  # 横坐标名称为t
         plt.legend()  # 图例
 
         # -------------------------- 选择fig4 --------------------------
         plt.sca(fig4)
         plt.plot(t, speed, color="red", label="speed", linestyle="solid")
         plt.plot(t, acceleration, color="cyan", label="acceleration", linestyle="solid")
-        plt.title("ls params")  # 图的标题
-        plt.xlabel("s")  # 横坐标名称为s
+        plt.title("st params")  # 图的标题
+        plt.xlabel("t")  # 横坐标名称为t
         plt.legend()  # 图例
 
         plt.pause(
